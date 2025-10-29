@@ -76,7 +76,7 @@ export function RegisterForm() {
   const isPending = form.formState.isSubmitting;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="w-full max-w-3xl flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
           <CardTitle>Get Started</CardTitle>
@@ -95,6 +95,12 @@ export function RegisterForm() {
                     )}
                     disabled={isPending}
                   >
+                    <Image
+                      src="/logos/github.svg"
+                      alt="Github"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Github
                   </Button>
                   <Button
@@ -105,6 +111,12 @@ export function RegisterForm() {
                     )}
                     disabled={isPending}
                   >
+                    <Image
+                      src="/logos/google.svg"
+                      alt="Google"
+                      width={20}
+                      height={20}
+                    />
                     Continue with Google
                   </Button>
                 </div>
