@@ -1,19 +1,60 @@
-import prisma from "@/lib/db";
 import { inngest } from "./client";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText } from "ai";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
-  { event: "test/hello.world" },
+import http from "http";
+import HttpsProxyAgent from "https-proxy-agent";
+
+// Explicitly pass API key to ensure the provider works even if env var name differs
+const google = createGoogleGenerativeAI({
+  apiKey:
+    process.env.GOOGLE_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
+const deepseek = createDeepSeek();
+const openai = createOpenAI();
+
+export const execute = inngest.createFunction(
+  { id: "execute-ai" },
+  { event: "execute/ai" },
   async ({ event, step }) => {
-    await step.sleep("fetching data...", "5s");
-    await step.sleep("transcribing", "5s");
-    await step.sleep("sending-to-ai", "5s");
-    await step.run("create-workflow", () => {
-      return prisma.workflow.create({
-        data: {
-          name: "workflow-from-inngest",
-        },
-      });
-    });
+    await step.sleep("pretend", "5s");
+
+    const { steps: deepseekSteps } = await step.ai.wrap(
+      "deepseek-generate-text",
+      generateText,
+      {
+        model: deepseek("deepseek-chat"),
+        system: "You are a helpful assistant.",
+        prompt: "What is 2 + 2?",
+      }
+    );
+
+    // const { steps: openAiSteps } = await step.ai.wrap(
+    //   "openai-generate-text",
+    //   generateText,
+    //   {
+    //     model: openai("gpt-4"),
+    //     system: "You are a helpful assistant.",
+    //     prompt: "What is 2 + 2?",
+    //   }
+    // );
+
+    const { steps: geminiSteps } = await step.ai.wrap(
+      "gemini-generate-text",
+      generateText,
+      {
+        model: google("gemini-2.5-flash"),
+        system: "You are a helpful assistant.",
+        prompt: "What is 2 + 2?",
+      }
+    );
+
+    return {
+      geminiSteps,
+      deepseekSteps,
+      // openAiSteps,
+    };
   }
 );
