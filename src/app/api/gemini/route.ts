@@ -18,6 +18,12 @@ if (proxyUrl) {
   );
 }
 
+/**
+ * Forwards a prompt from the request body to Google's Generative Language (Gemini) API and returns the API response.
+ *
+ * @param req - Next.js request whose JSON body may include `prompt` (defaults to a sample story prompt) and optional `model` (e.g., `"gemini-2.5-flash"`). The handler resolves an API key from environment variables `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_API_KEY`, or `GEMINI_API_KEY`.
+ * @returns A Response containing the JSON body returned by the Gemini API on success. If the upstream response is non-2xx, returns that body with the upstream status; if no API key is configured or an internal error occurs, returns a JSON error object with HTTP status 500.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { prompt = "Write a story about a magic backpack.", model } =
