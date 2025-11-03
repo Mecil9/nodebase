@@ -6,6 +6,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+/**
+ * Render the protected Home view that displays fetched workflows and provides controls to queue AI and workflow jobs.
+ *
+ * Renders the stringified result of the `getWorkflows` query, buttons to trigger the `testAi` and `createWorkflow` mutations (with disabled states while pending), and a logout button.
+ *
+ * @returns The component's JSX element containing workflow data, action buttons, and the logout control.
+ */
 export default function Home() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
