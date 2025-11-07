@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 12:04:02
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-05 18:48:47
+ * @LastEditTime: 2025-11-07 11:58:18
  * @FilePath: /nodebase/src/components/features/workflows/hooks/use-workflows.ts
  * @Description:
  *
@@ -41,6 +41,23 @@ export const useCreateWorkflow = () => {
       },
       onError: (error) => {
         toast.error(`Failed to create workflow "${error?.message}"`);
+      },
+    })
+  );
+};
+
+export const useRemoveWorkflow = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.workflows.remove.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Workflow ${data.name} removed successfully`);
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryFilter({ id: data.id })
+        );
       },
     })
   );

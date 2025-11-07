@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-10-29 18:52:28
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-04 22:17:00
+ * @LastEditTime: 2025-11-07 11:37:56
  * @FilePath: /nodebase/src/trpc/init.ts
  * @Description:
  *
@@ -13,6 +13,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { polarClient } from "@/lib/polar";
+import superjson from "superjson";
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -25,7 +26,9 @@ const t = initTRPC.create({
   /**
    * @see https://trpc.io/docs/server/data-transformers
    */
+  transformer: superjson,
 });
+
 export const createTRPCRouter = t.router;
 export const createCallerFactory = t.createCallerFactory;
 export const baseProcedure = t.procedure;

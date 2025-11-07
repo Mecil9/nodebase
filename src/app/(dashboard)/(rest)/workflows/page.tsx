@@ -2,13 +2,15 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-04 17:37:33
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-05 18:53:04
+ * @LastEditTime: 2025-11-06 17:02:17
  * @FilePath: /nodebase/src/app/(dashboard)/(rest)/workflows/page.tsx
  * @Description:
  *
  * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
  */
 import WorkflowsList, {
+  WorkflowError,
+  WorkflowLoading,
   WorkflowsContainer,
 } from "@/components/features/workflows/components/workflows";
 import { workflowsParamsLoader } from "@/components/features/workflows/server/params-loader";
@@ -32,8 +34,8 @@ const Page = async ({ searchParams }: Props) => {
   return (
     <WorkflowsContainer>
       <HydrateClient>
-        <ErrorBoundary fallback={<p>Error!</p>}>
-          <Suspense fallback={<p>Loading...</p>}>
+        <ErrorBoundary fallback={<WorkflowError />}>
+          <Suspense fallback={<WorkflowLoading />}>
             <WorkflowsList />
           </Suspense>
         </ErrorBoundary>
