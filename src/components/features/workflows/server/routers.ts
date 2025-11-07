@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 11:51:16
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-06 15:04:11
+ * @LastEditTime: 2025-11-07 13:10:06
  * @FilePath: /nodebase/src/components/features/workflows/server/routers.ts
  * @Description:
  *
@@ -53,7 +53,7 @@ export const workflowsRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await prisma.workflow.findUnique({
+      return await prisma.workflow.findUniqueOrThrow({
         where: {
           id: input.id,
           userId: ctx.auth.user.id,
