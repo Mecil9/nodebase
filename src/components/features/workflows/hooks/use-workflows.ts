@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 12:04:02
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-07 11:58:18
+ * @LastEditTime: 2025-11-07 12:41:07
  * @FilePath: /nodebase/src/components/features/workflows/hooks/use-workflows.ts
  * @Description:
  *
@@ -58,6 +58,35 @@ export const useRemoveWorkflow = () => {
         queryClient.invalidateQueries(
           trpc.workflows.getOne.queryFilter({ id: data.id })
         );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to fetch a single workflow using suspense
+ */
+export const useSuspenseWorkflow = (id: string) => {
+  const trpc = useTRPC();
+  return useSuspenseQuery(trpc.workflows.getOne.queryOptions({ id }));
+};
+
+// Hook to update a workflow name
+export const useUpdateWorkflowName = () => {
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.workflows.updateName.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Workflow "${data?.name}" updated successfully`);
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.workflows.getOne.queryFilter({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update workflow "${error?.message}"`);
       },
     })
   );
