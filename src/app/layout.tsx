@@ -2,19 +2,21 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-03 23:18:00
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-05 18:35:08
+ * @LastEditTime: 2025-11-08 17:44:23
  * @FilePath: /nodebase/src/app/layout.tsx
  * @Description:
  *
  * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
  */
 import type { Metadata } from "next";
-import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { ProxyAgent, setGlobalDispatcher } from "undici";
+
+import "./globals.css";
+import { Provider } from "jotai";
 
 if (process.env.HTTP_PROXY) {
   setGlobalDispatcher(new ProxyAgent(process.env.HTTP_PROXY));
@@ -35,8 +37,10 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <TRPCReactProvider>
           <NuqsAdapter>
-            {children}
-            <Toaster />
+            <Provider>
+              {children}
+              <Toaster />
+            </Provider>
           </NuqsAdapter>
         </TRPCReactProvider>
       </body>
