@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 16:51:52
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-07 16:53:21
+ * @LastEditTime: 2025-11-07 18:35:50
  * @FilePath: /nodebase/src/components/features/editor/components/add-node-button.tsx
  * @Description:
  *
@@ -10,20 +10,24 @@
  */
 "use client";
 
+import { NodeSelector } from "@/components/node-selector";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { memo } from "react";
+import { memo, useState } from "react";
 
 export const AddNodeButton = memo(() => {
+  const [selectorOpen, setSelectorOpen] = useState(false);
   return (
-    <Button
-      onClick={() => {}}
-      size="icon"
-      variant="outline"
-      className="bg-background"
-    >
-      <PlusIcon />
-    </Button>
+    <NodeSelector open={selectorOpen} onOpenChange={setSelectorOpen}>
+      <Button
+        onClick={() => {}}
+        size="icon"
+        variant="outline"
+        className="bg-background"
+      >
+        <PlusIcon />
+      </Button>
+    </NodeSelector>
   );
 });
 
