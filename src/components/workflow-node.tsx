@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 16:23:44
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-07 16:30:51
+ * @LastEditTime: 2025-11-08 20:49:25
  * @FilePath: /nodebase/src/components/workflow-node.tsx
  * @Description:
  *
@@ -39,7 +39,14 @@ export function WorkflowNode({
           <Button size="sm" variant="ghost" onClick={onSettings}>
             <SettingsIcon className="size-4" />
           </Button>
-          <Button size="sm" variant="ghost" onClick={onSettings}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
+          >
             <TrashIcon className="size-4" />
           </Button>
         </NodeToolbar>

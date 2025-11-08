@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 16:51:52
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-07 18:35:50
+ * @LastEditTime: 2025-11-08 17:12:10
  * @FilePath: /nodebase/src/components/features/editor/components/add-node-button.tsx
  * @Description:
  *
@@ -20,7 +20,7 @@ export const AddNodeButton = memo(() => {
   return (
     <NodeSelector open={selectorOpen} onOpenChange={setSelectorOpen}>
       <Button
-        onClick={() => {}}
+        onClick={() => setSelectorOpen(true)}
         size="icon"
         variant="outline"
         className="bg-background"
