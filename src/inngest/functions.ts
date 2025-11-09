@@ -1,80 +1,60 @@
+/*
+ * @Author: Mecil Meng
+ * @Date: 2025-11-09 00:53:01
+ * @LastEditors: Mecil Meng
+ * @LastEditTime: 2025-11-10 00:05:02
+ * @FilePath: /nodebase/src/inngest/functions.ts
+ * @Description:
+ *
+ * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
+ */
+import prisma from "@/lib/db";
 import { inngest } from "./client";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { createDeepSeek } from "@ai-sdk/deepseek";
-import { createOpenAI } from "@ai-sdk/openai";
-import { generateText } from "ai";
-import * as Sentry from "@sentry/nextjs";
 
 import http from "http";
 import HttpsProxyAgent from "https-proxy-agent";
+import { NonRetriableError } from "inngest";
+import { totplogicalSort } from "./utils";
+import { NodeType } from "@/generated/prisma/enums";
+import { getExecutor } from "@/components/features/executions/lib/executor-registry";
 
-// Explicitly pass API key to ensure the provider works even if env var name differs
-const google = createGoogleGenerativeAI({
-  apiKey:
-    process.env.GOOGLE_API_KEY ?? process.env.GOOGLE_GENERATIVE_AI_API_KEY,
-});
-const deepseek = createDeepSeek();
-const openai = createOpenAI();
-
-export const execute = inngest.createFunction(
-  { id: "execute-ai" },
-  { event: "execute/ai" },
+export const executeWorkflow = inngest.createFunction(
+  { id: "execute-workflow" },
+  { event: "workflows/execute.workflow" },
   async ({ event, step }) => {
-    await step.sleep("pretend", "5s");
+    const workflowId = event.data.workflowId;
 
-    Sentry.logger.info("User triggered test log", {
-      log_source: "sentry_test",
+    if (!workflowId) {
+      throw new NonRetriableError("workflow Id is required");
+    }
+
+    const sortedNodes = await step.run("prepare-workflow", async () => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: workflowId,
+        },
+        include: {
+          nodes: true,
+          connections: true,
+        },
+      });
+      return totplogicalSort(workflow.nodes, workflow.connections);
     });
 
-    const { steps: deepseekSteps } = await step.ai.wrap(
-      "deepseek-generate-text",
-      generateText,
-      {
-        model: deepseek("deepseek-chat"),
-        system: "You are a helpful assistant.",
-        prompt: "What is 2 + 2?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
+    // Initialize the context with any initial data from the trigger
+    let context = event.data.initialData || {};
 
-    // const { steps: openAiSteps } = await step.ai.wrap(
-    //   "openai-generate-text",
-    //   generateText,
-    //   {
-    //     model: openai("gpt-4"),
-    //     system: "You are a helpful assistant.",
-    //     prompt: "What is 2 + 2?",
-    //     experimental_telemetry: {
-    //       isEnabled: true,
-    //       recordInputs: true,
-    //       recordOutputs: true,
-    //     },
-    //   }
-    // );
+    // Execute each node
+    for (const node of sortedNodes) {
+      const executor = getExecutor(node.type as NodeType);
+      context = await executor({
+        data: node.data as Record<string, unknown>,
+        nodeId: node.id,
+        context,
+        step,
+      });
+    }
 
-    const { steps: geminiSteps } = await step.ai.wrap(
-      "gemini-generate-text",
-      generateText,
-      {
-        model: google("gemini-2.5-flash"),
-        system: "You are a helpful assistant.",
-        prompt: "What is 2 + 2?",
-        experimental_telemetry: {
-          isEnabled: true,
-          recordInputs: true,
-          recordOutputs: true,
-        },
-      }
-    );
-
-    return {
-      geminiSteps,
-      deepseekSteps,
-      // openAiSteps,
-    };
+    return { workflowId, result: context };
   }
 );
