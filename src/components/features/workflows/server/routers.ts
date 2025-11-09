@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 11:51:16
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-08 17:59:36
+ * @LastEditTime: 2025-11-09 23:33:16
  * @FilePath: /nodebase/src/components/features/workflows/server/routers.ts
  * @Description:
  *
@@ -19,8 +19,26 @@ import {
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import { NodeType } from "@/generated/prisma/enums";
+import { inngest } from "@/inngest/client";
 
 export const workflowsRouter = createTRPCRouter({
+  execute: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+
+      await inngest.send({
+        name: "workflows/execute.workflow",
+        data: { workflowId: input.id },
+      });
+
+      return workflow;
+    }),
   create: premiumProcedure.mutation(({ ctx }) => {
     return prisma.workflow.create({
       data: {

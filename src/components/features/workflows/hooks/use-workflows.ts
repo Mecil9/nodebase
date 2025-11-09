@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 12:04:02
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-08 17:38:55
+ * @LastEditTime: 2025-11-09 23:00:21
  * @FilePath: /nodebase/src/components/features/workflows/hooks/use-workflows.ts
  * @Description:
  *
@@ -108,6 +108,22 @@ export const useUpdateWorkflow = () => {
       },
       onError: (error) => {
         toast.error(`Failed to update workflow "${error?.message}"`);
+      },
+    })
+  );
+};
+// Hook to update a workflow
+
+export const useExecuteWorkflow = () => {
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.workflows.execute.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Workflow "${data?.name}" executed`);
+      },
+      onError: (error) => {
+        toast.error(`Failed to execute workflow "${error?.message}"`);
       },
     })
   );
