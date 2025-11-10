@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:14:47
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-09 23:29:06
+ * @LastEditTime: 2025-11-10 13:36:28
  * @FilePath: /nodebase/src/inngest/utils.ts
  * @Description:对节点进行拓扑排序
  *
@@ -11,7 +11,7 @@
 import { Connection, Node } from "@/generated/prisma/client";
 import toposort from "toposort";
 
-export const totplogicalSort = (
+export const topologicalSort = (
   nodes: Node[],
   connections: Connection[]
 ): Node[] => {

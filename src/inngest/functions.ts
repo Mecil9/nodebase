@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 00:53:01
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-10 00:05:02
+ * @LastEditTime: 2025-11-10 13:33:46
  * @FilePath: /nodebase/src/inngest/functions.ts
  * @Description:
  *
@@ -13,9 +13,9 @@ import { inngest } from "./client";
 
 import http from "http";
 import HttpsProxyAgent from "https-proxy-agent";
+
 import { NonRetriableError } from "inngest";
-import { totplogicalSort } from "./utils";
-import { NodeType } from "@/generated/prisma/enums";
+import { topologicalSort } from "./utils";
 import { getExecutor } from "@/components/features/executions/lib/executor-registry";
 
 export const executeWorkflow = inngest.createFunction(
@@ -38,7 +38,7 @@ export const executeWorkflow = inngest.createFunction(
           connections: true,
         },
       });
-      return totplogicalSort(workflow.nodes, workflow.connections);
+      return topologicalSort(workflow.nodes, workflow.connections);
     });
 
     // Initialize the context with any initial data from the trigger
@@ -46,7 +46,7 @@ export const executeWorkflow = inngest.createFunction(
 
     // Execute each node
     for (const node of sortedNodes) {
-      const executor = getExecutor(node.type as NodeType);
+      const executor = getExecutor(node.type);
       context = await executor({
         data: node.data as Record<string, unknown>,
         nodeId: node.id,

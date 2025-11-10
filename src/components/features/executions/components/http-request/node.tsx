@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 15:55:37
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-09 22:41:10
+ * @LastEditTime: 2025-11-10 13:38:21
  * @FilePath: /nodebase/src/components/features/executions/components/http-request/node.tsx
  * @Description:
  *
@@ -16,6 +16,7 @@ import { BaseExecutionNode } from "../base-execution-node";
 import { HttpRequestFormValues, HttpRequestDialog } from "./dialog";
 
 type HttpRequestNodeData = {
+  variableName?: string;
   endpoint?: string;
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: string;
