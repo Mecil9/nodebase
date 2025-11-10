@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-10 00:26:53
+ * @LastEditTime: 2025-11-10 13:57:18
  * @FilePath: /nodebase/src/components/features/executions/components/http-request/executor.ts
  * @Description:
  *
@@ -13,6 +13,7 @@ import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky";
 
 type HttpRequestData = {
+  variableName?: string;
   endpoint?: string;
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: string;
@@ -30,31 +31,55 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
     throw new NonRetriableError("Http Request node: No endpoint configured.");
   }
 
-  const result = await step.run("http-request", async () => {
-    const endpoint = data.endpoint!;
-    const method = data.method || "GET";
+  if (!data.variableName) {
+    throw new NonRetriableError(
+      "Http Request node: No variable name configured."
+    );
+  }
 
-    const options: KyOptions = { method };
+  const result = await step.run(
+    `http-request: ${data.variableName}`,
+    async () => {
+      const endpoint = data.endpoint!;
+      const method = data.method || "GET";
 
-    if (["POST", "PUT", "PATCH"].includes(method)) {
-      options.body = data.body;
+      const options: KyOptions = { method };
+
+      if (["POST", "PUT", "PATCH"].includes(method)) {
+        options.body = data.body;
+        options.headers = {
+          "Content-Type": "application/json",
+        };
+      }
+
+      const response = await ky(endpoint, options);
+      const contentType = response.headers.get("content-type");
+      const responseData = contentType?.includes("application/json")
+        ? await response.json()
+        : await response.text();
+
+      const responsePayload = {
+        httpResponse: {
+          status: response.status,
+          statusText: response.statusText,
+          data: responseData,
+        },
+      };
+
+      if (data.variableName) {
+        return {
+          ...context,
+          [data.variableName]: responsePayload,
+        };
+      }
+
+      // Fallback to direct httpResponse for backward compatibility
+      return {
+        ...context,
+        ...responsePayload,
+      };
     }
-
-    const response = await ky(endpoint, options);
-    const contentType = response.headers.get("content-type");
-    const responseData = contentType?.includes("application/json")
-      ? await response.json()
-      : await response.text();
-
-    return {
-      ...context,
-      httpResponse: {
-        status: response.status,
-        statusText: response.statusText,
-        data: responseData,
-      },
-    };
-  });
+  );
 
   // Todo: Publish "success state for http request"
 
