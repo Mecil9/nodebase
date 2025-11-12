@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 00:53:01
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-11 14:14:01
+ * @LastEditTime: 2025-11-12 16:10:26
  * @FilePath: /nodebase/src/inngest/functions.ts
  * @Description:
  *
@@ -19,6 +19,7 @@ import { topologicalSort } from "./utils";
 import { getExecutor } from "@/components/features/executions/lib/executor-registry";
 import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-trigger";
+import { googleFormTriggerChannel } from "./channels/google-form-trigger";
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -27,7 +28,11 @@ export const executeWorkflow = inngest.createFunction(
   },
   {
     event: "workflows/execute.workflow",
-    channels: [httpRequestChannel(), manualTriggerChannel()],
+    channels: [
+      httpRequestChannel(),
+      manualTriggerChannel(),
+      googleFormTriggerChannel(),
+    ],
   },
   async ({ event, step, publish }) => {
     const workflowId = event.data.workflowId;

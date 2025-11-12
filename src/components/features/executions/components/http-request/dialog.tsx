@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 21:29:36
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-10 13:46:39
+ * @LastEditTime: 2025-11-12 18:17:24
  * @FilePath: /nodebase/src/components/features/executions/components/http-request/dialog.tsx
  * @Description: 手动触发弹窗
  *
@@ -50,7 +50,7 @@ const formSchema = z.object({
       message:
         "Variable name must start with a letter or underscore and container only letters, numbers, and underscores.",
     }),
-  endpoint: z.url(),
+  endpoint: z.string().min(1, { message: "Endpoint URL is required." }),
   method: z.enum(["GET", "POST", "PUT", "DELETE", "PATCH"]),
   body: z.string().optional(),
 });
