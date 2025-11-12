@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-05 11:51:16
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-09 23:33:16
+ * @LastEditTime: 2025-11-12 16:23:52
  * @FilePath: /nodebase/src/components/features/workflows/server/routers.ts
  * @Description:
  *
@@ -20,6 +20,7 @@ import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import { NodeType } from "@/generated/prisma/enums";
 import { inngest } from "@/inngest/client";
+import { sendWorkflowExecution } from "@/inngest/utils";
 
 export const workflowsRouter = createTRPCRouter({
   execute: protectedProcedure
@@ -32,10 +33,7 @@ export const workflowsRouter = createTRPCRouter({
         },
       });
 
-      await inngest.send({
-        name: "workflows/execute.workflow",
-        data: { workflowId: input.id },
-      });
+      await sendWorkflowExecution({ workflowId: input.id });
 
       return workflow;
     }),
