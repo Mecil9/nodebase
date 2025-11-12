@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:35:51
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-10 13:32:20
+ * @LastEditTime: 2025-11-11 11:18:10
  * @FilePath: /nodebase/src/components/features/executions/lib/executor-registry.ts
  * @Description:
  *
@@ -16,7 +16,7 @@ import { httpRequestExecutor } from "../components/http-request/executor";
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
   [NodeType.MANUAL_TRIGGER]: manualTriggerExecutor,
-  [NodeType.HTTP_REQUEST]: httpRequestExecutor,
+  [NodeType.HTTP_REQUEST]: httpRequestExecutor, // Todo: fix types
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

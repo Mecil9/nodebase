@@ -2,12 +2,13 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:41:29
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-09 23:49:44
+ * @LastEditTime: 2025-11-11 11:05:10
  * @FilePath: /nodebase/src/components/features/executions/types.ts
  * @Description:
  *
  * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
  */
+import type { Realtime } from "@inngest/realtime";
 import type { GetStepTools, Inngest } from "inngest";
 
 export type WorkflowContext = Record<string, unknown>;
@@ -19,7 +20,7 @@ export interface NodeExecutorParams<TData = Record<string, unknown>> {
   nodeId: string;
   context: WorkflowContext;
   step: StepTools;
-  //publish: Todo add reltime later
+  publish: Realtime.PublishFn;
 }
 
 export type NodeExecutor<TData = Record<string, unknown>> = (

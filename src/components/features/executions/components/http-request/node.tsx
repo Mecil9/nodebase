@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 15:55:37
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-10 13:38:21
+ * @LastEditTime: 2025-11-11 14:07:31
  * @FilePath: /nodebase/src/components/features/executions/components/http-request/node.tsx
  * @Description:
  *
@@ -14,6 +14,9 @@ import { useReactFlow, type Node, type NodeProps } from "@xyflow/react";
 import { memo, useState } from "react";
 import { BaseExecutionNode } from "../base-execution-node";
 import { HttpRequestFormValues, HttpRequestDialog } from "./dialog";
+import { useNodeStatus } from "../../hooks/use-node-status";
+import { HTTP_REQUEST_CHANNEL_NAME } from "@/inngest/channels/http-request";
+import { fetchHttpRequestRealtimeToken } from "./actions";
 
 type HttpRequestNodeData = {
   variableName?: string;
@@ -33,7 +36,12 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     ? `${nodeData.method || "GET"} : ${nodeData.endpoint}`
     : "Not Configured";
 
-  const nodeStatus = "initial";
+  const nodeStatus = useNodeStatus({
+    nodeId: props.id,
+    channel: HTTP_REQUEST_CHANNEL_NAME,
+    topic: "status",
+    refreshToken: fetchHttpRequestRealtimeToken,
+  });
 
   const handleOpenSettings = () => setDialogOpen(true);
 
