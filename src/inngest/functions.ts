@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 00:53:01
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 16:10:26
+ * @LastEditTime: 2025-11-12 19:28:26
  * @FilePath: /nodebase/src/inngest/functions.ts
  * @Description:
  *
@@ -20,6 +20,7 @@ import { getExecutor } from "@/components/features/executions/lib/executor-regis
 import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-trigger";
 import { googleFormTriggerChannel } from "./channels/google-form-trigger";
+import { stripeTriggerChannel } from "./channels/stripe-trigger";
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -32,6 +33,7 @@ export const executeWorkflow = inngest.createFunction(
       httpRequestChannel(),
       manualTriggerChannel(),
       googleFormTriggerChannel(),
+      stripeTriggerChannel(),
     ],
   },
   async ({ event, step, publish }) => {

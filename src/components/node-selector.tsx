@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 18:01:00
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 12:40:36
+ * @LastEditTime: 2025-11-12 19:11:58
  * @FilePath: /nodebase/src/components/node-selector.tsx
  * @Description:
  *
@@ -47,6 +47,13 @@ const triggerNodes: NodeTypeOption[] = [
     description:
       "Triggers the flow when a Google Form is submitted. Good for collecting data",
     icon: "/logos/googleform.svg",
+  },
+  {
+    type: NodeType.STRIPE_TRIGGER,
+    label: "Stripe",
+    description:
+      "Triggers the flow when a Stripe event is captured. Good for collecting data",
+    icon: "/logos/stripe.svg",
   },
 ];
 
