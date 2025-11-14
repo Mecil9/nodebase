@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:35:51
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 19:48:04
+ * @LastEditTime: 2025-11-14 18:49:51
  * @FilePath: /nodebase/src/components/features/executions/lib/executor-registry.ts
  * @Description:
  *
@@ -14,6 +14,9 @@ import { manualTriggerExecutor } from "../../triggers/components/manual-trigger/
 import { httpRequestExecutor } from "../components/http-request/executor";
 import { googleFormTriggerExecutor } from "../../triggers/components/google-form-trigger/executor";
 import { stripeTriggerExecutor } from "../../triggers/components/stripe-trigger/executor";
+import { geminiExecutor } from "../components/gemini/executor";
+import { deepseekExecutor } from "../components/deepseek/executor";
+import { openAiExecutor } from "../components/openai/executor";
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
@@ -21,6 +24,9 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.HTTP_REQUEST]: httpRequestExecutor,
   [NodeType.GOOGLE_FORM_TRIGGER]: googleFormTriggerExecutor,
   [NodeType.STRIPE_TRIGGER]: stripeTriggerExecutor,
+  [NodeType.GEMINI]: geminiExecutor,
+  [NodeType.DEEPSEEK]: deepseekExecutor,
+  [NodeType.OPENAI]: openAiExecutor,
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {
