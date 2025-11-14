@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 18:01:00
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 19:11:58
+ * @LastEditTime: 2025-11-14 18:29:01
  * @FilePath: /nodebase/src/components/node-selector.tsx
  * @Description:
  *
@@ -63,6 +63,24 @@ const executionNodes: NodeTypeOption[] = [
     label: "HTTP Request",
     description: "Send an HTTP request to a specified URL",
     icon: GlobeIcon,
+  },
+  {
+    type: NodeType.GEMINI,
+    label: "Gemini",
+    description: "Use Gemini to generate content",
+    icon: "/logos/gemini.svg",
+  },
+  {
+    type: NodeType.DEEPSEEK,
+    label: "DeepSeek",
+    description: "Use DeepSeek to generate content",
+    icon: "/logos/deepseek.svg",
+  },
+  {
+    type: NodeType.OPENAI,
+    label: "OpenAI",
+    description: "Use OpenAI to generate content",
+    icon: "/logos/openai.svg",
   },
 ];
 

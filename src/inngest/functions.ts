@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 00:53:01
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 19:28:26
+ * @LastEditTime: 2025-11-14 14:34:18
  * @FilePath: /nodebase/src/inngest/functions.ts
  * @Description:
  *
@@ -21,6 +21,8 @@ import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-trigger";
 import { googleFormTriggerChannel } from "./channels/google-form-trigger";
 import { stripeTriggerChannel } from "./channels/stripe-trigger";
+import { geminiChannel } from "./channels/gemini";
+import { deepseekChannel } from "./channels/deepseek";
 
 export const executeWorkflow = inngest.createFunction(
   {
@@ -34,6 +36,8 @@ export const executeWorkflow = inngest.createFunction(
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
+      geminiChannel(),
+      deepseekChannel(),
     ],
   },
   async ({ event, step, publish }) => {
