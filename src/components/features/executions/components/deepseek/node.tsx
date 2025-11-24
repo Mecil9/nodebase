@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 15:55:37
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:39:05
+ * @LastEditTime: 2025-11-24 21:32:24
  * @FilePath: /nodebase/src/components/features/executions/components/deepseek/node.tsx
  * @Description:
  *
@@ -20,6 +20,7 @@ import { fetchDeepSeekRealtimeToken } from "./actions";
 
 type DeepSeekNodeData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };

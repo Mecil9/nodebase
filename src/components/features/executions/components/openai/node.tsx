@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 15:55:37
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:46:52
+ * @LastEditTime: 2025-11-24 21:45:13
  * @FilePath: /nodebase/src/components/features/executions/components/openai/node.tsx
  * @Description:
  *
@@ -20,6 +20,7 @@ import { OPENAI_CHANNEL_NAME } from "@/inngest/channels/openai";
 
 type OpenAiNodeData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };

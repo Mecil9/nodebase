@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:39:11
+ * @LastEditTime: 2025-11-24 21:40:42
  * @FilePath: /nodebase/src/components/features/executions/components/deepseek/executor.ts
  * @Description:
  *
@@ -14,6 +14,7 @@ import { NonRetriableError } from "inngest";
 import { createDeepSeek } from "@ai-sdk/deepseek";
 import { generateText } from "ai";
 import { deepseekChannel } from "@/inngest/channels/deepseek";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -24,6 +25,7 @@ Handlebars.registerHelper("json", (context) => {
 
 type DeepSeekData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -42,6 +44,11 @@ export const deepseekExecutor: NodeExecutor<DeepSeekData> = async ({
     throw new NonRetriableError("Gemini node: variableName is required");
   }
 
+  if (!data.credentialId) {
+    await publish(deepseekChannel().status({ nodeId, status: "error" }));
+    throw new NonRetriableError("Gemini node: credentialId is required");
+  }
+
   if (!data.userPrompt) {
     await publish(deepseekChannel().status({ nodeId, status: "error" }));
     throw new NonRetriableError("Gemini node: userPrompt is required");
@@ -52,10 +59,21 @@ export const deepseekExecutor: NodeExecutor<DeepSeekData> = async ({
     : "You are a helpful assistant";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  // Todo: fetch credential that user selected
-  const credentialValue = process.env.DEEPSEEK_API_KEY;
+  const credential = await step.run("get-credential", async () => {
+    return prisma.credential.findUnique({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
+
+  if (!credential) {
+    await publish(deepseekChannel().status({ nodeId, status: "error" }));
+    throw new NonRetriableError("DeepSeek node: credential not found");
+  }
+
   const deepseek = createDeepSeek({
-    apiKey: credentialValue,
+    apiKey: credential.value,
   });
 
   try {

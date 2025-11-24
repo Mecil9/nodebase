@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 15:55:37
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 12:57:47
+ * @LastEditTime: 2025-11-24 21:32:07
  * @FilePath: /nodebase/src/components/features/executions/components/gemini/node.tsx
  * @Description:
  *
@@ -20,6 +20,7 @@ import { fetchGeminiRealtimeToken } from "./actions";
 
 type GeminiNodeData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };

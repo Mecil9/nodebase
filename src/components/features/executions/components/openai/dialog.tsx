@@ -2,14 +2,15 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-08 21:29:36
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 13:00:57
- * @FilePath: /nodebase/src/components/features/executions/components/gemini/dialog.tsx
+ * @LastEditTime: 2025-11-24 21:43:40
+ * @FilePath: /nodebase/src/components/features/executions/components/openai/dialog.tsx
  * @Description: 手动触发弹窗
  *
  * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
  */
 "use client";
 
+import { useCredentialsByType } from "@/components/features/credentials/hooks/use-credentials";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,12 +29,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { CredentialType } from "@/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
+import Image from "next/image";
 
 const formSchema = z.object({
   variableName: z
@@ -43,6 +53,7 @@ const formSchema = z.object({
       message:
         "Variable name must start with a letter or underscore and container only letters, numbers, and underscores.",
     }),
+  credentialId: z.string().min(1, { message: "Credential is required." }),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, { message: "User prompt is required." }),
 });
@@ -62,10 +73,14 @@ export const OpenAiDialog = ({
   onSubmit,
   defaultValues = {},
 }: Props) => {
+  const { data: credentials, isLoading: isLoadingCredentials } =
+    useCredentialsByType(CredentialType.OPENAI);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       variableName: defaultValues.variableName || "",
+      credentialId: defaultValues.credentialId || "",
       systemPrompt: defaultValues.systemPrompt || "",
       userPrompt: defaultValues.userPrompt || "",
     },
@@ -75,6 +90,7 @@ export const OpenAiDialog = ({
     if (open) {
       form.reset({
         variableName: defaultValues.variableName || "",
+        credentialId: defaultValues.credentialId || "",
         systemPrompt: defaultValues.systemPrompt || "",
         userPrompt: defaultValues.userPrompt || "",
       });
@@ -115,6 +131,42 @@ export const OpenAiDialog = ({
                     Use this name to reference the result in other nodes:{" "}
                     {`{{${watchVariableName}.aiResponse}}`}
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="credentialId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>OPENAI Credential</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isLoadingCredentials || !credentials?.length}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a credential" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {credentials?.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src="/logos/openai.svg"
+                              alt="openai"
+                              width={16}
+                              height={16}
+                            />
+                            <span>{option.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

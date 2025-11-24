@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:44:26
+ * @LastEditTime: 2025-11-24 21:45:38
  * @FilePath: /nodebase/src/components/features/executions/components/openai/executor.ts
  * @Description:
  *
@@ -14,6 +14,7 @@ import { NonRetriableError } from "inngest";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { openAiChannel } from "@/inngest/channels/openai";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -24,6 +25,7 @@ Handlebars.registerHelper("json", (context) => {
 
 type OpenAiData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -42,6 +44,11 @@ export const openAiExecutor: NodeExecutor<OpenAiData> = async ({
     throw new NonRetriableError("OpenAi node: variableName is required");
   }
 
+  if (!data.credentialId) {
+    await publish(openAiChannel().status({ nodeId, status: "error" }));
+    throw new NonRetriableError("OpenAi node: credentialId is required");
+  }
+
   if (!data.userPrompt) {
     await publish(openAiChannel().status({ nodeId, status: "error" }));
     throw new NonRetriableError("OpenAi node: userPrompt is required");
@@ -52,10 +59,21 @@ export const openAiExecutor: NodeExecutor<OpenAiData> = async ({
     : "You are a helpful assistant";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  // Todo: fetch credential that user selected
-  const credentialValue = process.env.OPENAI_API_KEY;
+  const credential = await step.run("get-credential", async () => {
+    return prisma.credential.findUnique({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
+
+  if (!credential) {
+    await publish(openAiChannel().status({ nodeId, status: "error" }));
+    throw new NonRetriableError("OpenAi node: credential not found");
+  }
+
   const openAi = createOpenAI({
-    apiKey: credentialValue,
+    apiKey: credential?.value,
   });
 
   try {
