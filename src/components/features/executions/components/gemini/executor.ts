@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 12:59:01
+ * @LastEditTime: 2025-11-24 21:40:07
  * @FilePath: /nodebase/src/components/features/executions/components/gemini/executor.ts
  * @Description:
  *
@@ -14,6 +14,7 @@ import { NonRetriableError } from "inngest";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { geminiChannel } from "@/inngest/channels/gemini";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -24,6 +25,7 @@ Handlebars.registerHelper("json", (context) => {
 
 type GeminiData = {
   variableName?: string;
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -42,6 +44,11 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     throw new NonRetriableError("Gemini node: variableName is required");
   }
 
+  if (!data.credentialId) {
+    await publish(geminiChannel().status({ nodeId, status: "error" }));
+    throw new NonRetriableError("Gemini node: credentialId is required");
+  }
+
   if (!data.userPrompt) {
     await publish(geminiChannel().status({ nodeId, status: "error" }));
     throw new NonRetriableError("Gemini node: userPrompt is required");
@@ -52,10 +59,20 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     : "You are a helpful assistant";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  // Todo: fetch credential that user selected
-  const credentialValue = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const credential = await step.run("get-credential", async () => {
+    return prisma.credential.findUnique({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
+
+  if (!credential) {
+    throw new NonRetriableError("Gemini node: credential not found");
+  }
+
   const google = createGoogleGenerativeAI({
-    apiKey: credentialValue,
+    apiKey: credential.value,
   });
 
   try {
