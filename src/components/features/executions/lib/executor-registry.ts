@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:35:51
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:49:51
+ * @LastEditTime: 2025-11-25 00:08:53
  * @FilePath: /nodebase/src/components/features/executions/lib/executor-registry.ts
  * @Description:
  *
@@ -17,6 +17,8 @@ import { stripeTriggerExecutor } from "../../triggers/components/stripe-trigger/
 import { geminiExecutor } from "../components/gemini/executor";
 import { deepseekExecutor } from "../components/deepseek/executor";
 import { openAiExecutor } from "../components/openai/executor";
+import { discordExecutor } from "../components/discord/executor";
+import { slackExecutor } from "../components/slack/executor";
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
@@ -27,6 +29,8 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.GEMINI]: geminiExecutor,
   [NodeType.DEEPSEEK]: deepseekExecutor,
   [NodeType.OPENAI]: openAiExecutor,
+  [NodeType.DISCORD]: discordExecutor,
+  [NodeType.SLACK]: slackExecutor,
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

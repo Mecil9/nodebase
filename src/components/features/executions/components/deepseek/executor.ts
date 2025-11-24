@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-24 21:40:42
+ * @LastEditTime: 2025-11-24 22:47:44
  * @FilePath: /nodebase/src/components/features/executions/components/deepseek/executor.ts
  * @Description:
  *
@@ -33,6 +33,7 @@ type DeepSeekData = {
 export const deepseekExecutor: NodeExecutor<DeepSeekData> = async ({
   data,
   nodeId,
+  userId,
   context,
   step,
   publish,
@@ -63,6 +64,7 @@ export const deepseekExecutor: NodeExecutor<DeepSeekData> = async ({
     return prisma.credential.findUnique({
       where: {
         id: data.credentialId,
+        userId,
       },
     });
   });

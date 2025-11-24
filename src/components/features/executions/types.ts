@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:41:29
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-11 11:05:10
+ * @LastEditTime: 2025-11-24 22:43:48
  * @FilePath: /nodebase/src/components/features/executions/types.ts
  * @Description:
  *
@@ -18,6 +18,7 @@ export type StepTools = GetStepTools<Inngest.Any>;
 export interface NodeExecutorParams<TData = Record<string, unknown>> {
   data: TData;
   nodeId: string;
+  userId: string;
   context: WorkflowContext;
   step: StepTools;
   publish: Realtime.PublishFn;

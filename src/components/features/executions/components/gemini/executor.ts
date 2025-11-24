@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-24 21:40:07
+ * @LastEditTime: 2025-11-24 22:44:56
  * @FilePath: /nodebase/src/components/features/executions/components/gemini/executor.ts
  * @Description:
  *
@@ -33,6 +33,7 @@ type GeminiData = {
 export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   data,
   nodeId,
+  userId,
   context,
   step,
   publish,
@@ -63,6 +64,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     return prisma.credential.findUnique({
       where: {
         id: data.credentialId,
+        userId,
       },
     });
   });

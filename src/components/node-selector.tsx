@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-07 18:01:00
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-14 18:29:01
+ * @LastEditTime: 2025-11-24 23:50:56
  * @FilePath: /nodebase/src/components/node-selector.tsx
  * @Description:
  *
@@ -81,6 +81,18 @@ const executionNodes: NodeTypeOption[] = [
     label: "OpenAI",
     description: "Use OpenAI to generate content",
     icon: "/logos/openai.svg",
+  },
+  {
+    type: NodeType.DISCORD,
+    label: "Discord",
+    description: "Use Discord to generate content",
+    icon: "/logos/discord.svg",
+  },
+  {
+    type: NodeType.SLACK,
+    label: "Slack",
+    description: "Use Slack to generate content",
+    icon: "/logos/slack.svg",
   },
 ];
 
