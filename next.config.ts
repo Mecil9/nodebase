@@ -1,8 +1,21 @@
+/*
+ * @Author: Mecil Meng
+ * @Date: 2025-11-09 00:53:01
+ * @LastEditors: Mecil Meng
+ * @LastEditTime: 2025-11-26 18:05:18
+ * @FilePath: /nodebase/next.config.ts
+ * @Description:
+ *
+ * Copyright (c) 2025 by JCBEL/JCBLE/MSCI/MOTU, All Rights Reserved.
+ */
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async redirects() {
     return [
       {

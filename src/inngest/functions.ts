@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 00:53:01
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-25 13:57:08
+ * @LastEditTime: 2025-11-26 18:00:50
  * @FilePath: /nodebase/src/inngest/functions.ts
  * @Description:
  *
@@ -30,7 +30,7 @@ import { ExecutionStatus } from "@/generated/prisma/enums";
 export const executeWorkflow = inngest.createFunction(
   {
     id: "execute-workflow",
-    retries: 0, // Remove in Production
+    retries: process.env.NODE_ENV === "production" ? 3 : 0,
     onFailure: async ({ event, step }) => {
       return prisma.execution.update({
         where: { inngestEventId: event.data.event.id },
