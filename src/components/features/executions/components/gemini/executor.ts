@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-24 22:44:56
+ * @LastEditTime: 2025-11-26 16:31:36
  * @FilePath: /nodebase/src/components/features/executions/components/gemini/executor.ts
  * @Description:
  *
@@ -15,6 +15,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { geminiChannel } from "@/inngest/channels/gemini";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -74,7 +75,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   }
 
   const google = createGoogleGenerativeAI({
-    apiKey: credential.value,
+    apiKey: decrypt(credential.value || ""),
   });
 
   try {

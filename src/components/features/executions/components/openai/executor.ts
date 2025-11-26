@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:53:45
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-24 22:46:35
+ * @LastEditTime: 2025-11-26 16:31:15
  * @FilePath: /nodebase/src/components/features/executions/components/openai/executor.ts
  * @Description:
  *
@@ -15,6 +15,7 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { openAiChannel } from "@/inngest/channels/openai";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 
 Handlebars.registerHelper("json", (context) => {
   const jsonString = JSON.stringify(context, null, 2);
@@ -75,7 +76,7 @@ export const openAiExecutor: NodeExecutor<OpenAiData> = async ({
   }
 
   const openAi = createOpenAI({
-    apiKey: credential?.value,
+    apiKey: decrypt(credential?.value || ""),
   });
 
   try {
