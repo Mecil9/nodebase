@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-11-09 23:14:47
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-12 16:22:27
+ * @LastEditTime: 2025-11-25 13:41:44
  * @FilePath: /nodebase/src/inngest/utils.ts
  * @Description:对节点进行拓扑排序
  *
@@ -11,6 +11,7 @@
 import { Connection, Node } from "@/generated/prisma/client";
 import toposort from "toposort";
 import { inngest } from "./client";
+import { createId } from "@paralleldrive/cuid2";
 
 export const topologicalSort = (
   nodes: Node[],
@@ -62,5 +63,6 @@ export const sendWorkflowExecution = async (data: {
   await inngest.send({
     name: "workflows/execute.workflow",
     data,
+    id: createId(),
   });
 };
