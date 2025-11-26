@@ -2,7 +2,7 @@
  * @Author: Mecil Meng
  * @Date: 2025-10-29 18:52:28
  * @LastEditors: Mecil Meng
- * @LastEditTime: 2025-11-04 21:50:18
+ * @LastEditTime: 2025-11-26 17:45:33
  * @FilePath: /nodebase/src/lib/auth.ts
  * @Description:
  *
@@ -22,10 +22,20 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+  },
   plugins: [
     polar({
       client: polarClient,
-      createCustomerOnSignUp: true,
+      createCustomerOnSignUp: false,
       use: [
         checkout({
           products: [
